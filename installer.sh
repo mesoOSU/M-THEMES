@@ -3,7 +3,7 @@ cd $BASE_DIR/mpich/src
 rm -r mpich-3.2.1
 tar xf mpich-3.2.1.tar.gz
 cd $BASE_DIR/mpich/src/mpich-3.2.1
-./configure --prefix=$BASE_DIR/mpich
+./configure --prefix=$BASE_DIR/mpich  --disable-fortran
 make
 make install
 cd $BASE_DIR/fftw/src
