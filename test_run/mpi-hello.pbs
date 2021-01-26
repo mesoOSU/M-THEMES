@@ -1,0 +1,10 @@
+#!bin/bash
+#PBS -A PAA0023
+#PBS -N evp
+#PBS -l walltime=0:30:00
+#PBS -l nodes=1:ppn=32
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+mpiexec ./trial input
+

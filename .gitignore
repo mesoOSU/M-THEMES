@@ -1,6 +1,15 @@
 fftw/include
 fftw/bin
+fftw/lib
 fftw/info
+fftw/src/fftw-2.1.5
 mpich/include
 mpich/bin
+mpich/lib
+mpich/share
 mpich/info
+mpich/src/mpich-3.2.1
+src/*.o
+test_run/*out
+test_run/forge
+src/forge

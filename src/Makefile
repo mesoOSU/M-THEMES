@@ -1,18 +1,16 @@
-CC = mpicxx
+BASE_DIR=$(pwd)
+CC = ../mpich/bin/mpicxx
 HEADER = evp.h evpFlags.h V3math.h pf_xrx.h PFgrid.h
 CFLAGS = -Wall -O3
 SEEKFLAG = -DMPICH_IGNORE_CXX_SEEK
-#INCLUDES = -I/public/home/pzhao/Soft_mu01/include 
-#LFLAGS = -L/public/home/pzhao/Soft_mu01/lib
-MPI_CFLAGS = -I/users/PAS1064/osu10047/local/mpich/3.2.1/include
-MPI_LIBS = -L/users/PAS1064/osu10047/local/mpich/3.2.1/lib
-FFTW_CFLAGS = -I/users/PAS1064/osu10047/local/fftw/2.1.5/include
-FFTW_LIBS = -L/users/PAS1064/osu10047/local/fftw/2.1.5/lib
+MPI_CFLAGS = -I../mpich/include
+MPI_LIBS = -L../mpich/lib
+FFTW_CFLAGS = -I../fftw/include
+FFTW_LIBS = -L../fftw/lib
 LIBS = -lfftw_mpi -lfftw -lgsl -lgslcblas -lm
-#LIBS = -lfftw3_mpi -lfftw3 -lgsl -lgslcblas -lm
 SRCS = evp.c io.c init.c kinematics.c evolution.c constitutive.c integrated.c pf_xrx.c  
 OBJS = $(SRCS:.c=.o)
-MAIN = trial
+MAIN = forge
 .PHONY: depend clean
 #all: $(MAIN)
 
