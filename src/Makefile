@@ -7,7 +7,7 @@ MPI_CFLAGS = -I../mpich/include
 MPI_LIBS = -L../mpich/lib
 FFTW_CFLAGS = -I../fftw/include
 FFTW_LIBS = -L../fftw/lib
-LIBS = -lfftw_mpi -lfftw -lgsl -lgslcblas -lm
+LIBS = -lfftw_mpi -lfftw -lgsl -lgslcblas -lm -lhdf5
 SRCS = evp.c io.c init.c kinematics.c evolution.c constitutive.c integrated.c pf_xrx.c  
 OBJS = $(SRCS:.c=.o)
 MAIN = forge

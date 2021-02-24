@@ -10,6 +10,8 @@ mpich/share
 mpich/info
 mpich/src/mpich-3.2.1/*
 src/*.o
+src/*.out
 test_run/*out
 test_run/forge
 src/forge
+test_run/microstructure.h5

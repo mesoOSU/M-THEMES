@@ -3,6 +3,7 @@
 #include <string.h>
 #include <fftw_mpi.h>
 #include <assert.h>
+#include <hdf5.h>
 #include "evp.h"
 
 #define CC(i,j,k,l) (C_ijkl[i-1][j-1][k-1][l-1])
@@ -250,24 +251,56 @@ static void InitMicroStruct(char *s)
 	std::vector<G_Info> local_gID_list;
 	int tmp_flag;
 
-	fp = fopen(s,"r");
-	/*empty reading to go to the corresponding slabbed region*/
+	double euler_data[32][32][32][3];
+	int grain_data[32][32][32];
+	int phase_data[32][32][32];
+
+	hid_t file_id, euler_set, grain_set, phase_set;
+	herr_t status;
+
+	// fp = fopen(s,"r"); 
+
+	/*empty reading to go to the corresponding slabbed region
 	for(i=0;i<EmptySteps;i++){
 		fgets(buffer,80,fp);
-	}
+	}*/
+
+	// open file (read only)
+	file_id = H5Fopen("microstructure.h5", H5F_ACC_RDONLY, H5P_DEFAULT); 
+
+	// open datasets
+	euler_set = H5Dopen2(file_id, "/euler_angles", H5P_DEFAULT);
+	grain_set = H5Dopen2(file_id, "/grain", H5P_DEFAULT);
+	phase_set = H5Dopen2(file_id, "/phase", H5P_DEFAULT);
+
+	// read datasets
+	status = H5Dread(euler_set, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, euler_data);
+	status = H5Dread(grain_set, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, grain_data);
+	status = H5Dread(phase_set, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, phase_data);
+
+	// close datasets and file
+	status = H5Dclose(euler_set);
+	status = H5Dclose(grain_set);
+	status = H5Dclose(phase_set);
+	status = H5Fclose(file_id);
 
 	nph1 = 0;
-	local_loop{
-		fgets(buffer,80,fp);
-		sscanf(buffer,"%lf %lf %lf %d %d %d %d %d", &ph, &th, &om, &ii, &jj, &kk, &jgr, &jph);
-		idx = ((ii-1-lxs)*CellDim[1]+jj-1)*CellDim[2]+kk-1; 
-		if(idx!=pIDX){
+	local_loop{ 
+		ph = euler_data[px][py][pz][0]; // phi
+		th = euler_data[px][py][pz][1]; // theta
+		om = euler_data[px][py][pz][2]; // omega
+
+		jgr = grain_data[px][py][pz]; // grain ID
+		jph = grain_data[px][py][pz]; // phase ID
+
+		/*idx = ((ii-1-lxs)*CellDim[1]+jj-1)*CellDim[2]+kk-1; 
+		if(idx!=pIDX){ 
 			PError("Error in reading microstructure data file (inconsistent index system)!!", 1139);
-		}
+		}*/
 
 		if(jph==1) nph1++;
-		grain_f[pIDX] = jgr; 
-		phase_f[pIDX] = jph; 
+		grain_f[pIDX] = jgr;
+		phase_f[pIDX] = jph;
 
 		if(!Type_phases[jph-1]){	// NOT gas!!
 			ph *= PI/180.;	th *= PI/180.;	om *= PI/180.;
@@ -275,7 +308,7 @@ static void InitMicroStruct(char *s)
 			T2_loop{
 				TranMat_xt2sa[pIDX][mi][mj] = sa2xt[mj][mi];
 			}
-			Ten4thTransform(caux3333,sa2xt,Cijkl[jph-1],2);	// Cijkl[jph] is in xtal ref. Do inverse transform
+			Ten4thTransform(caux3333,sa2xt,Cijkl[jph-1],2); // Cijkl[jph] is in xtal ref. Do inverse transform
 			chg_basis(aux6, aux33, caux66,caux3333,4);
 			C6_loop{
 				C_gr[pIDX][mi][mj] = caux66[mi][mj];
@@ -298,7 +331,7 @@ static void InitMicroStruct(char *s)
 
 		}
 	}
-	fclose(fp);
+	//fclose(fp);
 
 	/* construct global gID_list */
 	int local_size = local_gID_list.size();
