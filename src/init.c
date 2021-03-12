@@ -245,58 +245,76 @@ static void InitMicroStruct(char *s)
 	FILE *fp;
 	char buffer[80] = {0};
 	int i, idx;
-	int EmptySteps = mpirank*Nxyz/NumPE;
 	ten2nd sa2xt;	// transform matrix (sample -> xtal)
 	std::vector<G_Info>::iterator it, end;
 	std::vector<G_Info> local_gID_list;
 	int tmp_flag;
 
-	double euler_data[32][32][32][3];
-	int grain_data[32][32][32];
-	int phase_data[32][32][32];
+	double ph_data[CellDim[0]][CellDim[1]][CellDim[2]];
+	double th_data[CellDim[0]][CellDim[1]][CellDim[2]];
+	double om_data[CellDim[0]][CellDim[1]][CellDim[2]];
+	int grain_data[CellDim[0]][CellDim[1]][CellDim[2]];
+	int phase_data[CellDim[0]][CellDim[1]][CellDim[2]];
 
-	hid_t file_id, euler_set, grain_set, phase_set;
+	hid_t plist_id, file_id, ph_set, th_set, om_set, grain_set, phase_set, ph_space, th_space, om_space, grain_space, phase_space; // hdf ids
 	herr_t status;
-
-	// fp = fopen(s,"r"); 
-
-	/*empty reading to go to the corresponding slabbed region
-	for(i=0;i<EmptySteps;i++){
-		fgets(buffer,80,fp);
-	}*/
 
 	// open file (read only)
 	file_id = H5Fopen("microstructure.h5", H5F_ACC_RDONLY, H5P_DEFAULT); 
 
 	// open datasets
-	euler_set = H5Dopen2(file_id, "/euler_angles", H5P_DEFAULT);
+	ph_set = H5Dopen2(file_id, "/euler/phi", H5P_DEFAULT);
+	th_set = H5Dopen2(file_id, "/euler/theta", H5P_DEFAULT);
+	om_set = H5Dopen2(file_id, "/euler/omega", H5P_DEFAULT);
 	grain_set = H5Dopen2(file_id, "/grain", H5P_DEFAULT);
 	phase_set = H5Dopen2(file_id, "/phase", H5P_DEFAULT);
 
-	// read datasets
-	status = H5Dread(euler_set, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, euler_data);
+	// open dataspaces
+	ph_space = H5Dget_space(ph_set);
+	th_space = H5Dget_space(th_set);
+	om_space = H5Dget_space(om_set);
+	grain_space = H5Dget_space(grain_set);
+	phase_space = H5Dget_space(phase_set);
+
+	// define hyperslab params
+	hsize_t slab_count[] = {CellDim[0]/NumPE, CellDim[1], CellDim[2]};
+	hsize_t slab_offset[] = {mpirank*slab_count[0], 0, 0};
+
+	// select hyperslabs
+	status = H5Sselect_hyperslab(ph_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+	status = H5Sselect_hyperslab(th_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+	status = H5Sselect_hyperslab(om_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+	status = H5Sselect_hyperslab(grain_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+	status = H5Sselect_hyperslab(phase_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+
+	// read corresponding dataset hyperslabs
+	status = H5Dread(ph_set, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, ph_data);
+	status = H5Dread(th_set, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, th_data);
+	status = H5Dread(om_set, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, om_data);
 	status = H5Dread(grain_set, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, grain_data);
 	status = H5Dread(phase_set, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, phase_data);
 
-	// close datasets and file
-	status = H5Dclose(euler_set);
+	// close dataspaces, datasets, and file
+	status = H5Sclose(ph_space);
+	status = H5Sclose(th_space);
+	status = H5Sclose(om_space);
+	status = H5Sclose(grain_space);
+	status = H5Sclose(phase_space);
+	status = H5Dclose(ph_set);
+	status = H5Dclose(th_set);
+	status = H5Dclose(om_set);
 	status = H5Dclose(grain_set);
 	status = H5Dclose(phase_set);
 	status = H5Fclose(file_id);
 
 	nph1 = 0;
 	local_loop{ 
-		ph = euler_data[px][py][pz][0]; // phi
-		th = euler_data[px][py][pz][1]; // theta
-		om = euler_data[px][py][pz][2]; // omega
+		ph = ph_data[px][py][pz]; // phi
+		th = th_data[px][py][pz]; // theta
+		om = om_data[px][py][pz]; // omega
 
 		jgr = grain_data[px][py][pz]; // grain ID
-		jph = grain_data[px][py][pz]; // phase ID
-
-		/*idx = ((ii-1-lxs)*CellDim[1]+jj-1)*CellDim[2]+kk-1; 
-		if(idx!=pIDX){ 
-			PError("Error in reading microstructure data file (inconsistent index system)!!", 1139);
-		}*/
+		jph = phase_data[px][py][pz]; // phase ID
 
 		if(jph==1) nph1++;
 		grain_f[pIDX] = jgr;
@@ -331,7 +349,6 @@ static void InitMicroStruct(char *s)
 
 		}
 	}
-	//fclose(fp);
 
 	/* construct global gID_list */
 	int local_size = local_gID_list.size();
