@@ -8,12 +8,15 @@ N_phases	2
 # System size
 CellDim   32 32 32
 #CellDim   128 128 128
+#CellDim   117 201 189
 
 # Data file of initial microstructure
 #initial_ms		/public/home/pzhao/work/VPSC/evpfft/msDataBase/AlSingleXtal_8x8x8.ms
 #initial_ms		/public/home/pzhao/work/VPSC/evpfft/msDataBase/poly_4N_Cu.ms
 #initial_ms		/public/home/pzhao/work/VPSC/evpfft/msDataBase/4N_Cu_many_32.ms
-initial_ms	  FFT_microstructure_pore_197.txt
+#initial_ms	  SmallIN100_Final.dream3d
+initial_ms	  FFT_microstructure_pore_197.h5
+
 # Type of phase-1 and phase-2 (in accordance with the following order)
 # 0(xtal) 1(gas)
 Type_phases		0	1
