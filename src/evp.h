@@ -225,6 +225,9 @@ extern real ElastConst_PhaseII[4];
 extern char Slip_PhaseI[100];	// currently assume only 2 phases at most
 extern char Slip_PhaseII[100];
 extern char initial_ms[100]; // file name of inital microstructure
+extern char Euler_Path[100]; // path within HDF file for euler angles
+extern char Grain_Path[100]; // path within HDF file for grain ids
+extern char Phase_Path[100]; // path within HDF file for phase ids
 extern ten4th Cijkl[NPHMAX];
 extern real **nSRS;		// strain rate sensitvity of each slip/twin system for each phase
 extern int *nSYS;		// number of slip+twin systems for each phase
@@ -247,6 +250,9 @@ real ElastConst_PhaseII[4] = {0.0};
 char Slip_PhaseI[100] = {0};
 char Slip_PhaseII[100] = {0};
 char initial_ms[100] = {0};
+char Euler_Path[100] = {0};
+char Grain_Path[100] = {0};
+char Phase_Path[100] = {0};
 ten4th Cijkl[NPHMAX] = {0.0};
 real **nSRS = 0;
 int *nSYS = 0;

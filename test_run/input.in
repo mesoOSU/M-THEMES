@@ -15,7 +15,11 @@ CellDim   32 32 32
 #initial_ms		/public/home/pzhao/work/VPSC/evpfft/msDataBase/poly_4N_Cu.ms
 #initial_ms		/public/home/pzhao/work/VPSC/evpfft/msDataBase/4N_Cu_many_32.ms
 #initial_ms	  SmallIN100_Final.dream3d
-initial_ms	  FFT_microstructure_pore_197.h5
+initial_ms FFT_microstructure_pore_197.h5
+
+Euler_Path /DataContainers/Small IN100/EBSD Scan Data/EulerAngles
+Grain_Path /DataContainers/Small IN100/EBSD Scan Data/FeatureIds
+Phase_Path /DataContainers/Small IN100/EBSD Scan Data/Phases
 
 # Type of phase-1 and phase-2 (in accordance with the following order)
 # 0(xtal) 1(gas)
@@ -29,14 +33,14 @@ ElastConst_PhaseI	162700.	119000.	71150.	0.35
 # The above is not actually used because we use T-dependent elastic stiffness
 
 # Data file containing info of phase 1
-Slip_PhaseI		Cu_p.sx
+Slip_PhaseI Cu_p.sx
 
 # Elastic constants of phase 1: c11, c12, c44, nu
 # Gas, ignored!
 ElastConst_PhaseII	0.0	0.0	0.0	0.0
 
 # Data file containing info of phase 2
-Slip_PhaseII	Cu_p.sx
+Slip_PhaseII Cu_p.sx
 
 
 #====================================================

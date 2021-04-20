@@ -257,9 +257,9 @@ static void InitMicroStruct(char *s)
 	file_id = H5Fopen(s, H5F_ACC_RDONLY, H5P_DEFAULT); 
 
 	// open datasets
-	euler_set = H5Dopen2(file_id, "/DataContainers/Small IN100/EBSD Scan Data/EulerAngles", H5P_DEFAULT);
-	grain_set = H5Dopen2(file_id, "/DataContainers/Small IN100/EBSD Scan Data/FeatureIds", H5P_DEFAULT);
-	phase_set = H5Dopen2(file_id, "/DataContainers/Small IN100/EBSD Scan Data/Phases", H5P_DEFAULT);
+	euler_set = H5Dopen2(file_id, Euler_Path, H5P_DEFAULT);
+	grain_set = H5Dopen2(file_id, Grain_Path, H5P_DEFAULT);
+	phase_set = H5Dopen2(file_id, Phase_Path, H5P_DEFAULT);
 
 	// open dataspaces
 	euler_space = H5Dget_space(euler_set);

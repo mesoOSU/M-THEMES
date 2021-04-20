@@ -44,6 +44,9 @@ NameList nameList[] = {
 	NameS(Slip_PhaseI),
 	NameS(Slip_PhaseII),
 	NameS(initial_ms),
+	NameS(Euler_Path),
+	NameS(Grain_Path),
+	NameS(Phase_Path),
 #ifdef DD_BASED_FLAG
 	NameR(a0),
 	NameR(L0),
@@ -121,23 +124,27 @@ int GetNameList(char **argv){
 					if(nameList[k].vStatus == 0){
 						nameList[k].vStatus = 1;
 						for(j=0; j<nameList[k].vLen; j++){
-							token = strtok(NULL, ", \t\n");
-							if(token){
-								switch(nameList[k].vType){
-									case N_I:
-										*NP_I = atol(token);
-										break;
-									case N_R:
-										*NP_R = atof(token);
-										break;
-									case N_S:
-										strcpy(NP_S,token);
-										break;
+							if (nameList[k].vType == N_S) {
+								// token is a string, take rest of line to be argument
+								char *argument = strtok(NULL, "\n");
+								strcpy(NP_S, argument);
+								break;
+							} else {
+								token = strtok(NULL, ", \t\n");
+								if(token){
+									switch(nameList[k].vType){
+										case N_I:
+											*NP_I = atol(token);
+											break;
+										case N_R:
+											*NP_R = atof(token);
+											break;
+									}
 								}
-							}
-							else{
-								nameList[k].vStatus = 2;
-								ok = 0;
+								else{
+									nameList[k].vStatus = 2;
+									ok = 0;
+								}
 							}
 						}
 						token = strtok(NULL, ", \t\n");
