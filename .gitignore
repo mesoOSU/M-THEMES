@@ -14,4 +14,5 @@ src/*.out
 test_run/*out
 test_run/forge
 src/forge
-test_run/microstructure.h5
+test_run/*.h5
+test_run/*.dream3d
