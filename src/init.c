@@ -240,18 +240,13 @@ static void InitMicroStruct(char *s)
 	voigt66 c066_local = {0.0};
 	real ph, th, om;
 	int jgr, jph;
-	int ii,jj,kk;
 	int nph1, nph1_all;
-	FILE *fp;
-	char buffer[80] = {0};
-	int i, idx;
 	ten2nd sa2xt;	// transform matrix (sample -> xtal)
 	std::vector<G_Info>::iterator it, end;
 	std::vector<G_Info> local_gID_list;
 	int tmp_flag;
 
-	hid_t file_id, euler_set, grain_set, phase_set, euler_space, grain_space, phase_space; // hdf ids
-	herr_t status;
+	hid_t file_id, euler_set, grain_set, phase_set, euler_space, grain_space, phase_space, euler_mem_space, mem_space; // hdf ids
 
 	// open file (read only)
 	file_id = H5Fopen(s, H5F_ACC_RDONLY, H5P_DEFAULT); 
@@ -267,33 +262,41 @@ static void InitMicroStruct(char *s)
 	phase_space = H5Dget_space(phase_set);
 
 	// define hyperslab params
-	hsize_t slab_count[] = {CellDim[0]/NumPE, CellDim[1], CellDim[2]};
-	hsize_t slab_offset[] = {mpirank*slab_count[0], 0, 0};
+	hsize_t slab_count[] = {(unsigned int)(CellDim[0]/NumPE), (unsigned int)CellDim[1], (unsigned int)CellDim[2], 1};
+	hsize_t slab_offset[] = {mpirank*slab_count[0], 0, 0, 0};
+	hsize_t euler_slab_count[] = {(unsigned int)CellDim[0]/NumPE, (unsigned int)CellDim[1], (unsigned int)CellDim[2], 3};
+	hsize_t euler_slab_offset[] = {mpirank*slab_count[0], 0, 0, 0};
 
 	// select hyperslabs
-	status = H5Sselect_hyperslab(euler_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
-	status = H5Sselect_hyperslab(grain_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
-	status = H5Sselect_hyperslab(phase_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+	H5Sselect_hyperslab(euler_space, H5S_SELECT_SET, euler_slab_offset, NULL, euler_slab_count, NULL);
+	H5Sselect_hyperslab(grain_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+	H5Sselect_hyperslab(phase_space, H5S_SELECT_SET, slab_offset, NULL, slab_count, NULL);
+
+	// define memory dataspaces
+	euler_mem_space = H5Screate_simple(4, euler_slab_count, NULL);
+	mem_space = H5Screate_simple(4, slab_count, NULL);
 
 	// allocate arrays for dataset read
-	int length = CellDim[0] * CellDim[1] * CellDim[2];
+	int length = slab_count[0] * slab_count[1] * slab_count[2];
 	double *euler_data = (double *) malloc(length * 3 * sizeof(double));
 	int *grain_data = (int *) malloc(length * sizeof(int));
 	int *phase_data = (int *) malloc(length * sizeof(int));
 
 	// read corresponding dataset hyperslabs
-	status = H5Dread(euler_set, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL, H5P_DEFAULT, euler_data);
-	status = H5Dread(grain_set, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, grain_data);
-	status = H5Dread(phase_set, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, phase_data);
+	H5Dread(euler_set, H5T_NATIVE_DOUBLE, euler_mem_space, euler_space, H5P_DEFAULT, euler_data);
+	H5Dread(grain_set, H5T_NATIVE_INT, mem_space, grain_space, H5P_DEFAULT, grain_data);
+	H5Dread(phase_set, H5T_NATIVE_INT, mem_space, phase_space, H5P_DEFAULT, phase_data);
 
 	// close dataspaces, datasets, and file
-	status = H5Sclose(euler_space);
-	status = H5Sclose(grain_space);
-	status = H5Sclose(phase_space);
-	status = H5Dclose(euler_set);
-	status = H5Dclose(grain_set);
-	status = H5Dclose(phase_set);
-	status = H5Fclose(file_id);
+	H5Sclose(euler_space);
+	H5Sclose(grain_space);
+	H5Sclose(phase_space);
+	H5Sclose(euler_mem_space);
+	H5Sclose(mem_space);
+	H5Dclose(euler_set);
+	H5Dclose(grain_set);
+	H5Dclose(phase_set);
+	H5Fclose(file_id);
 
 	nph1 = 0;
 
@@ -396,7 +399,7 @@ static void InitMicroStruct(char *s)
 	sort(gID_list.begin(),gID_list.end(),G_Info::before);
 	init_gid=gID_list.back().ID;
 	if(mpirank==0){
-		printf("The initial microstructure contains %d grains.\n",gID_list.size());
+		printf("The initial microstructure contains %ld grains.\n",gID_list.size());
 		printf("The initial largest grain ID is %d\n",gID_list.back().ID);
 	}
 
