@@ -8,7 +8,7 @@ MPI_LIBS = -L../mpich/lib
 FFTW_CFLAGS = -I../fftw/include
 FFTW_LIBS = -L../fftw/lib
 LIBS = -lfftw_mpi -lfftw -lgsl -lgslcblas -lm -lhdf5
-SRCS = evp.c io.c init.c kinematics.c evolution.c constitutive.c integrated.c pf_xrx.c  
+SRCS = evp.c io.c init.c kinematics.c evolution.c constitutive.c integrated.c pf_xrx.c hdf_output.c
 OBJS = $(SRCS:.c=.o)
 MAIN = forge
 .PHONY: depend clean

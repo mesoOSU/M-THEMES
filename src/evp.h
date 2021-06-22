@@ -2,6 +2,7 @@
 #define EVP_H
 #include <stdlib.h>
 #include <mpi.h>
+#include <hdf5.h>
 #include <fftw_mpi.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
@@ -593,6 +594,27 @@ void WriteGrainPFMPI(char *s, int step);
 #ifdef DD_BASED_FLAG
 void WriteRhoMPI(char *s, char *type, int step);
 void WriteRhoDotMPI(char *s, int step);
+#endif
+
+/**********************
+  hdf_output.c
+  *********************/
+hid_t CreateParallelHDF(char *name);
+void WriteHDFDataset(hid_t file_id, char *dset_name, hid_t mem_type, const void *buffer);
+void WriteEdotHDF(char *s, int step);
+void WriteEpsHDF(char *s, int step);
+void WriteElsHDF(char *s, int step);
+void WriteDisgradHDF(char *s, int step);
+void WriteSigHDF(char *s, int step);
+void WriteTextureHDF(char *s, int step);
+void WriteSLIPHDF(char *s, int step);
+void WriteNewPositionHDF(char *s,int step);
+void WriteDDHDF(char *s, int step);
+void WriteGrainHDF(char *s, int step);
+void WriteGrainPFHDF(char *s, int step);
+#ifdef DD_BASED_FLAG
+void WriteRhoHDF(char *s, char *type, int step);
+void WriteRhoDotHDF(char *s, int step);
 #endif
 
 /**********************

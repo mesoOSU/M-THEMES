@@ -1631,31 +1631,31 @@ if(istep<=2000000) {
 	//	    WriteSigMPI("sig",istep);
 	//	} 
 		if((PrintControl[0]==1) && (step_drx == 0) && (istep%500 == 0)){
-		//	WriteEpsMPI("eps",istep); // plastic strain field
-			WriteElsMPI("els",istep); // elastic strain field
-			
-		//	WriteEdotMPI("edot",istep);
-		//  WriteTextureMPI("tex", istep);
-                   /*        WriteEpsMPI("eps_beforeDRX",istep); // plastic strain field
-			    WriteSigMPI("sig_beforeDRX",istep);
-			    WriteSigMPI("edot_beforeDRX",istep);
-		      WriteRhoMPI("rho_beforeDRX","SSD",istep);
-		      WriteRhoMPI("rho_beforeDRX","Mobile",istep);
-		      WriteRhoMPI("rho_beforeDRX","GND",istep);
-			    WriteRhoDotMPI("rhodot_beforeDRX",istep);
-		      WriteTextureMPI("tex_beforeDRX", istep);*/
-                      //    WriteEpsMPI("eps_afterDRX",istep); // plastic strain field
-			    WriteSigMPI("sig_afterDRX",istep);
-			 //   WriteSigMPI("edot_afterDRX",istep);
-		   //  WriteRhoMPI("rho_afterDRX","SSD",istep);
-		     // WriteRhoMPI("rho_afterDRX","Mobile",istep);
-		  //    WriteRhoMPI("rho_afterDRX","GND",istep);
-		    //  WriteRhoMPI("rho_afterDRX","parallel",istep);
-		    //  WriteRhoMPI("rho_afterDRX","forest",istep);
-			  //  WriteRhoDotMPI("rhodot_afterDRX",istep);
-		   //  WriteTextureMPI("tex_afterDRX", istep);
-		   //   WriteSLIPMPI("slip_afterDRX",istep);
-		  //    WriteNewPositionMPI("new_position_afterDRX",istep);
+			// WriteEpsHDF("eps",istep); // plastic strain field
+			WriteElsHDF("els",istep); // elastic strain field
+
+			// WriteEdotHDF("edot",istep);
+			// WriteTextureHDF("tex", istep);
+			/*        WriteEpsHDF("eps_beforeDRX",istep); // plastic strain field
+				  WriteSigHDF("sig_beforeDRX",istep);
+				  WriteSigHDF("edot_beforeDRX",istep);
+				  WriteRhoHDF("rho_beforeDRX","SSD",istep);
+				  WriteRhoHDF("rho_beforeDRX","Mobile",istep);
+				  WriteRhoHDF("rho_beforeDRX","GND",istep);
+				  WriteRhoDotHDF("rhodot_beforeDRX",istep);
+				  WriteTextureHDF("tex_beforeDRX", istep);*/
+			// WriteEpsHDF("eps_afterDRX",istep); // plastic strain field
+			WriteSigHDF("sig_afterDRX",istep);
+			// WriteSigHDF("edot_afterDRX",istep);
+			// WriteRhoHDF("rho_afterDRX","SSD",istep);
+			// WriteRhoHDF("rho_afterDRX","Mobile",istep);
+			// WriteRhoHDF("rho_afterDRX","GND",istep);
+			// WriteRhoHDF("rho_afterDRX","parallel",istep);
+			// WriteRhoHDF("rho_afterDRX","forest",istep);
+			// WriteRhoDotHDF("rhodot_afterDRX",istep);
+			// WriteTextureHDF("tex_afterDRX", istep);
+			// WriteSLIPHDF("slip_afterDRX",istep);
+			// WriteNewPositionHDF("new_position_afterDRX",istep);
 		}
 
 if((istep == 5000) || (istep == 7000)){
