@@ -592,6 +592,10 @@ rho_avg[iter] = 0.0;
 	real evmp, dvmp;
 	real Err_e_local, Err_s_local;
 
+	// HDF variables
+	hid_t file_id;
+	hid_t group;
+	char group_name[100];
 
 	if(mpirank==0){
 		printf("\n\n======================================\n");
@@ -606,6 +610,7 @@ local_loop{
 	    new_position[pIDX][2] = pz;
 	}
 
+	file_id = CreateParallelHDF(Output_HDF); // create HDF file for output
 	for(istep=0;istep<N_steps;istep++){
 		if(mpirank==0){
 			printf("\n****************************************\n");
@@ -1631,31 +1636,29 @@ if(istep<=2000000) {
 	//	    WriteSigMPI("sig",istep);
 	//	} 
 		if((PrintControl[0]==1) && (step_drx == 0) && (istep%500 == 0)){
-			// WriteEpsHDF("eps",istep); // plastic strain field
-			WriteElsHDF("els",istep); // elastic strain field
+			// create step group
+			snprintf(group_name, 100, "S%06d", istep);
+			group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
-			// WriteEdotHDF("edot",istep);
-			// WriteTextureHDF("tex", istep);
-			/*        WriteEpsHDF("eps_beforeDRX",istep); // plastic strain field
-				  WriteSigHDF("sig_beforeDRX",istep);
-				  WriteSigHDF("edot_beforeDRX",istep);
-				  WriteRhoHDF("rho_beforeDRX","SSD",istep);
-				  WriteRhoHDF("rho_beforeDRX","Mobile",istep);
-				  WriteRhoHDF("rho_beforeDRX","GND",istep);
-				  WriteRhoDotHDF("rhodot_beforeDRX",istep);
-				  WriteTextureHDF("tex_beforeDRX", istep);*/
-			// WriteEpsHDF("eps_afterDRX",istep); // plastic strain field
-			WriteSigHDF("sig_afterDRX",istep);
-			// WriteSigHDF("edot_afterDRX",istep);
-			// WriteRhoHDF("rho_afterDRX","SSD",istep);
-			// WriteRhoHDF("rho_afterDRX","Mobile",istep);
-			// WriteRhoHDF("rho_afterDRX","GND",istep);
-			// WriteRhoHDF("rho_afterDRX","parallel",istep);
-			// WriteRhoHDF("rho_afterDRX","forest",istep);
-			// WriteRhoDotHDF("rhodot_afterDRX",istep);
-			// WriteTextureHDF("tex_afterDRX", istep);
-			// WriteSLIPHDF("slip_afterDRX",istep);
-			// WriteNewPositionHDF("new_position_afterDRX",istep);
+			// write data into step group
+			WriteGrainHDF(group, "Grain");
+			WriteGrainPFHDF(group, "GrainPF");
+			WriteDisgradHDF(group, "Disgrad");
+			WriteElsHDF(group, "Elastic_Strain");
+			WriteEpsHDF(group, "Plastic_Strain");
+			WriteSigHDF(group, "Stress");
+			WriteEdotHDF(group, "Plastic_Strain_Rate");
+			WriteTextureHDF(group, "Texture");
+			WriteSLIPHDF(group, "Total_Shear_Slip");
+			WriteNewPositionHDF(group, "Displacement_Vector");
+			WriteDDHDF(group, "Dislocation_Density_Slip");
+			WriteRhoHDF(group, "Total_Dislocation_Density", "SSD");
+			WriteRhoHDF(group, "Total_Dislocation_Density", "Mobile");
+			WriteRhoHDF(group, "Total_Dislocation_Density", "GND");
+			WriteRhoDotHDF(group, "Rhodot");
+
+			// close step group
+			H5Gclose(group);
 		}
 
 if((istep == 5000) || (istep == 7000)){
@@ -1720,10 +1723,12 @@ if((PrintControl[0]==1)&&(istep%PrintControl[1]==0)){
 #endif
 	}
 
+	H5Fclose(file_id);
 	if(mpirank==0){
 		printf("-------------Simulation ends----------------\n");
 		printf("======================================\n\n");
 	}
+
 
 	return;
 }/*end Evolution()*/

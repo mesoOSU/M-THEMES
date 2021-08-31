@@ -5,13 +5,10 @@
 
 hid_t CreateParallelHDF(char *name) {
 	hid_t fapl_id, file_id;
-	const int BUFFER_SIZE = 100;
-	char fname[BUFFER_SIZE];
 
 	fapl_id = H5Pcreate(H5P_FILE_ACCESS);
 	H5Pset_fapl_mpio(fapl_id, MPI_COMM_WORLD, MPI_INFO_NULL);
-	snprintf(fname, BUFFER_SIZE, "%s.h5", name);
-	file_id = H5Fcreate(fname, H5F_ACC_TRUNC, H5P_DEFAULT, fapl_id);
+	file_id = H5Fcreate(name, H5F_ACC_TRUNC, H5P_DEFAULT, fapl_id);
 
 	return file_id;
 }/*end CreateParallelHDF()*/
@@ -45,40 +42,27 @@ void WriteHDFDataset(hid_t file_id, int dimensions, char *dset_path, hid_t type_
 	H5Dclose(set_id);
 }/*end WriteHDFDataset()*/
 
-void WriteGrainHDF(char *s, int step)
+void WriteGrainHDF(hid_t file_id, char *group_name)
 {
-	const int BUFFER_SIZE = 100;
-	char dset_name[BUFFER_SIZE];
-	hid_t file_id;
-
-	file_id = CreateParallelHDF(s);
-
-	snprintf(dset_name, BUFFER_SIZE, "%s_S%06d", s, step);
-	WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_INT, grain_f);
+	WriteHDFDataset(file_id, 3, group_name, H5T_NATIVE_INT, grain_f);
 }/*end WriteGrainHDF()*/
 
 #ifdef PF_DRX
-void WriteGrainPFHDF(char *s, int step)
+void WriteGrainPFHDF(hid_t file_id, char *group_name)
 {
-	const int BUFFER_SIZE = 100;
-	char dset_name[BUFFER_SIZE];
-	hid_t file_id;
-
-	file_id = CreateParallelHDF(s);
-
-	snprintf(dset_name, BUFFER_SIZE, "%s_S%06d", s, step);
-	WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_INT, gID_rex);
+	WriteHDFDataset(file_id, 3, group_name, H5T_NATIVE_INT, gID_rex);
 }/*end WriteGrainPFHDF()*/
 #endif
 
-void WriteDisgradHDF(char *s, int step)
+void WriteDisgradHDF(hid_t file_id, char *group_name)
 {
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *tmpVector;
 	int i;
+	hid_t group;
 
-	file_id = CreateParallelHDF(s);
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	AllocMem(tmpVector, lsize, real);
 
@@ -98,22 +82,24 @@ void WriteDisgradHDF(char *s, int step)
 			}
 		}
 
-		sprintf(dset_name, "%01d_S%06d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "%01d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
 	}
 
-	H5Fclose(file_id);
+	H5Gclose(group);
 	free(tmpVector);
 }/*end WriteDisgradHDF()*/
 
-void WriteElsHDF(char *s, int step)
+void WriteElsHDF(hid_t file_id, char *group_name)
 {
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *tmpVector;
 	int i;
+	hid_t group;
 
-	file_id = CreateParallelHDF(s);
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
 	AllocMem(tmpVector, lsize, real);
 
 	for(i=0;i<6;i++){
@@ -132,21 +118,23 @@ void WriteElsHDF(char *s, int step)
 			}
 		}
 
-		sprintf(dset_name, "%01d_S%06d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "%01d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
 	}
 
-	H5Fclose(file_id);
+	H5Gclose(group);
 	free(tmpVector);
 }/* WriteElsHDF()*/
 
-void WriteEpsHDF(char *s, int step)
+void WriteEpsHDF(hid_t file_id, char *group_name)
 {
-	hid_t file_id;
-	char dset_name[100];
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *tmpVector;
+	hid_t group;
 
-	file_id = CreateParallelHDF(s);
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
 	AllocMem(tmpVector, lsize, real);
 
 	for (int i=0;i<6;i++) {
@@ -165,22 +153,24 @@ void WriteEpsHDF(char *s, int step)
 			}
 		}
 
-		sprintf(dset_name, "%01d_S%06d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_IEEE_F32BE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "%01d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_IEEE_F32BE, tmpVector);
 	}
 
-	H5Fclose(file_id);
+	H5Gclose(group);
 	free(tmpVector);
 }/*end WriteEpsHDF()*/
 
-void WriteSigHDF(char *s, int step)
+void WriteSigHDF(hid_t file_id, char *group_name)
 {
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *tmpVector;
 	int i;
+	hid_t group;
 
-	file_id = CreateParallelHDF(s);
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
 	AllocMem(tmpVector, lsize, real);
 
 	for(i=0;i<6;i++){
@@ -199,22 +189,24 @@ void WriteSigHDF(char *s, int step)
 			}
 		}
 
-		sprintf(dset_name, "%01d_S%06d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "%01d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
 	}
 
-	H5Fclose(file_id);
+	H5Gclose(group);
 	free(tmpVector);
 }/*end WriteSigHDF()*/
 
-void WriteEdotHDF(char *s, int step)
+void WriteEdotHDF(hid_t file_id, char *group_name)
 {
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *tmpVector;
 	int i;
+	hid_t group;
 
-	file_id = CreateParallelHDF(s);
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
 	AllocMem(tmpVector, lsize, real);
 
 	for(i=0;i<6;i++){
@@ -233,21 +225,24 @@ void WriteEdotHDF(char *s, int step)
 			}
 		}
 
-		sprintf(dset_name, "%01d_S%06d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "%01d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
 	}
 
-	H5Fclose(file_id);
+	H5Gclose(group);
 	free(tmpVector);
 }/*end WriteEdotHDF()*/
 
-void WriteTextureHDF(char *s, int step)
+void WriteTextureHDF(hid_t file_id, char *group_name)
 {
 	// declare vars/allocate memory
 	real t1, ph, t2;
 	ten2nd sa2xt;
-	hid_t file_id;
-	char dset_name[100];
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
+	hid_t group;
+
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	real *angleVector;
 	real *grainVector;
@@ -270,34 +265,33 @@ void WriteTextureHDF(char *s, int step)
 		phaseVector[pIDX] = phase_f[pIDX];
 	}
 
-	// make file
-	file_id = CreateParallelHDF(s);
-
 	// write
-	sprintf(dset_name, "Angles_S%06d", step);
-	WriteHDFDataset(file_id, 4, dset_name, H5T_NATIVE_DOUBLE, angleVector);
+	snprintf(dset_name, BUFFER_SIZE, "Euler Angles");
+	WriteHDFDataset(group, 4, dset_name, H5T_NATIVE_DOUBLE, angleVector);
 
-	sprintf(dset_name, "Grains_S%06d", step);
-	WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, grainVector);
+	snprintf(dset_name, BUFFER_SIZE, "Grains");
+	WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, grainVector);
 
-	sprintf(dset_name, "Phases_S%06d", step);
-	WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, phaseVector);
+	snprintf(dset_name, BUFFER_SIZE, "Phases");
+	WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, phaseVector);
 
 	// free
-	H5Fclose(file_id);
+	H5Gclose(group);
 	free(angleVector);
 	free(grainVector);
 	free(phaseVector);
-
 }/*end WriteTextureHDF()*/
 
-void WriteSLIPHDF(char *s, int step)
+void WriteSLIPHDF(hid_t file_id, char *group_name)
 {
 	// init vars/allocate memory
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *SSParentVector[12]; // parent array to store 12 individual SS vectors
 	real *grainVector = (real *)malloc(lsize * sizeof(real));
+	hid_t group;
+
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	for (int i = 0; i < 12; i++) {
 		real *SSChildVector = (real *)malloc(lsize * sizeof(real));
@@ -313,30 +307,29 @@ void WriteSLIPHDF(char *s, int step)
 		}
 	}
 
-	// make file
-	file_id = CreateParallelHDF(s);
-
 	// write
-	sprintf(dset_name, "Grains_S%06d", step);
-	WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, grainVector);
+	snprintf(dset_name, BUFFER_SIZE, "Grains");
+	WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, grainVector);
 	for (int i = 0; i < 12; i++) {
-		sprintf(dset_name, "SS%d_S%04d", i+1, step);
-
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, SSParentVector[i]);
+		snprintf(dset_name, BUFFER_SIZE, "SS%d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, SSParentVector[i]);
 	}
 
 	// free
-	H5Fclose(file_id);
+	H5Gclose(group);
 	for (int i = 0; i < 12; i++) {
 		free(SSParentVector[i]);
 	}
 }/*end WriteSLIPHDF()*/
 
-void WriteNewPositionHDF(char *s, int step) {
+void WriteNewPositionHDF(hid_t file_id, char *group_name) {
 	// init vars/alloc mem
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *SSParentVector[3]; // parent array to store 3 individual SS vectors
+	hid_t group;
+
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	for (int i = 0; i < 3; i++) {
 		real *SSChildVector = (real *)malloc(lsize * sizeof(real));
@@ -350,29 +343,29 @@ void WriteNewPositionHDF(char *s, int step) {
 		}
 	}
 
-	// make file
-	file_id = CreateParallelHDF(s);
-
 	// write
 	for (int i = 0; i < 3; i++) {
-		sprintf(dset_name, "SS%d_S%04d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, SSParentVector[i]);
+		snprintf(dset_name, BUFFER_SIZE, "SS%d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, SSParentVector[i]);
 	}
 
 	// free
-	H5Fclose(file_id);
+	H5Gclose(group);
 	for (int i = 0; i < 3; i++) {
 		free(SSParentVector[i]);
 	}
 }/*end WriteNewPositionHDF()*/
 
-void WriteDDHDF(char *s, int step)
+void WriteDDHDF(hid_t file_id, char *group_name)
 {
 	// init vars/alloc mem
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *grainVector = (real *) malloc(lsize * sizeof(real));
 	real *SSParentVector[12];
+	hid_t group;
+
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	for (int i = 0; i < 12; i++) {
 		real *SSChildVector = (real *)malloc(lsize * sizeof(real));
@@ -387,30 +380,31 @@ void WriteDDHDF(char *s, int step)
 		}
 	}
 
-	// make file
-	file_id = CreateParallelHDF(s);
-
 	// write
 	for (int i = 0; i < 12; i++) {
-		sprintf(dset_name, "SS%d_S%04d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, SSParentVector[i]);
+		snprintf(dset_name, BUFFER_SIZE, "SS%d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, SSParentVector[i]);
 	}
 
 	// free
-	H5Fclose(file_id);
+	H5Gclose(group);
 	for (int i = 0; i < 12; i++) {
 		free(SSParentVector[i]);
 	}
 }
 
 #ifdef DD_BASED_FLAG
-void WriteRhoHDF(char *s, char *type, int step)
+void WriteRhoHDF(hid_t file_id, char *group_name, char *type)
 {
-	char fname[100];
-	char dset_name[100];
-	hid_t file_id;
 	int i;
 	int jph;
+	hid_t group;
+
+	if (H5Lexists(file_id, group_name, H5P_DEFAULT) == 1) { // check if group already exists
+		group = H5Gopen2(file_id, group_name, H5P_DEFAULT);
+	} else {
+		group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+	}
 
 	local_loop{
 		jph = phase_f[pIDX];
@@ -446,29 +440,21 @@ void WriteRhoHDF(char *s, char *type, int step)
 		}
 	}
 
-	// Rho is designed to be called multiple times, so check if HDF file already exists and if so use it
-	snprintf(fname, 100, "%s.h5", s);
-	if (access(fname, F_OK) != 0) {
-		file_id = CreateParallelHDF(s);
-	} else {
-		file_id = H5Fopen(fname, H5F_ACC_RDWR, H5P_DEFAULT);
-	}
+	WriteHDFDataset(group, 3, type, H5T_NATIVE_DOUBLE, rho_tot);
 
-	sprintf(dset_name, "%s_S%06d", type, step);
-	WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, rho_tot);
-
-	H5Fclose(file_id);
+	H5Gclose(group);
 }/*end WriteRhoHDF()*/
 
-void WriteRhoDotHDF(char *s, int step)
+void WriteRhoDotHDF(hid_t file_id, char *group_name)
 {
-	char dset_name[100];
-	hid_t file_id;
+	const int BUFFER_SIZE = 100;
+	char dset_name[BUFFER_SIZE];
 	real *tmpVector;
+	hid_t group;
+
+	group = H5Gcreate2(file_id, group_name, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	AllocMem(tmpVector, lsize, real);
-
-	file_id = CreateParallelHDF(s);
 
 	for (int i=0;i<NSYSMX;i++) {
 		// SSD
@@ -476,29 +462,27 @@ void WriteRhoDotHDF(char *s, int step)
 			tmpVector[pIDX] = rho_dot_s[pIDX][i];
 		}
 
-		sprintf(dset_name, "SSD_slip%02d_S%06d", i+1, step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "SSD_slip%02d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
 
 		// GND-I
 		local_loop{
 			tmpVector[pIDX] = rho_dot_g1[pIDX][i];
 		}
 
-		sprintf(dset_name, "GND1_slip%02d_S%06d", i+1,step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "GND1_slip%02d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
 
 		// GND-II
 		local_loop{
 			tmpVector[pIDX] = rho_dot_g2[pIDX][i];
 		}
 
-		sprintf(dset_name, "GND2_slip%02d_S%06d", i+1,step);
-		WriteHDFDataset(file_id, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
+		snprintf(dset_name, BUFFER_SIZE, "GND2_slip%02d", i+1);
+		WriteHDFDataset(group, 3, dset_name, H5T_NATIVE_DOUBLE, tmpVector);
 	}
 
+	H5Gclose(group);
 	free(tmpVector);
-	H5Fclose(file_id);
-
-	return;
 }/*end WriteRhoDotHDF()*/
 #endif

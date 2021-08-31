@@ -47,6 +47,7 @@ NameList nameList[] = {
 	NameS(Euler_Path),
 	NameS(Grain_Path),
 	NameS(Phase_Path),
+	NameS(Output_HDF),
 #ifdef DD_BASED_FLAG
 	NameR(a0),
 	NameR(L0),
@@ -488,7 +489,7 @@ void WriteTextureMPI(char *s, int step)
 		real angle[3];	// Euler angles
 		int coord[3];		// coordinates
 		int jgr;			// grain type
-		int jph;			//phase type
+		int jph;			// phase type
 		int buff;			// buffer zone
 	} EntryType;
 	EntryType value = {0};
@@ -800,7 +801,7 @@ void WriteNewPositionMPI(char *s, int step)
 	free(tmpVector);
 
 	return;
-}/*end WriteSLIPMPI()*/
+}/*end WriteNewPositionMPI()*/
 
 void WriteDDMPI(char *s, int step)
 {

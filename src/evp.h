@@ -226,9 +226,10 @@ extern real ElastConst_PhaseII[4];
 extern char Slip_PhaseI[100];	// currently assume only 2 phases at most
 extern char Slip_PhaseII[100];
 extern char initial_ms[100]; // file name of inital microstructure
-extern char Euler_Path[100]; // path within HDF file for euler angles
-extern char Grain_Path[100]; // path within HDF file for grain ids
-extern char Phase_Path[100]; // path within HDF file for phase ids
+extern char Euler_Path[100]; // path within input HDF file for euler angles
+extern char Grain_Path[100]; // path within input HDF file for grain ids
+extern char Phase_Path[100]; // path within input HDF file for phase ids
+extern char Output_HDF[100]; // filename for HDF output
 extern ten4th Cijkl[NPHMAX];
 extern real **nSRS;		// strain rate sensitvity of each slip/twin system for each phase
 extern int *nSYS;		// number of slip+twin systems for each phase
@@ -254,6 +255,7 @@ char initial_ms[100] = {0};
 char Euler_Path[100] = {0};
 char Grain_Path[100] = {0};
 char Phase_Path[100] = {0};
+char Output_HDF[100] = {0};
 ten4th Cijkl[NPHMAX] = {0.0};
 real **nSRS = 0;
 int *nSYS = 0;
@@ -601,20 +603,20 @@ void WriteRhoDotMPI(char *s, int step);
   *********************/
 hid_t CreateParallelHDF(char *name);
 void WriteHDFDataset(hid_t file_id, char *dset_name, hid_t mem_type, const void *buffer);
-void WriteEdotHDF(char *s, int step);
-void WriteEpsHDF(char *s, int step);
-void WriteElsHDF(char *s, int step);
-void WriteDisgradHDF(char *s, int step);
-void WriteSigHDF(char *s, int step);
-void WriteTextureHDF(char *s, int step);
-void WriteSLIPHDF(char *s, int step);
-void WriteNewPositionHDF(char *s,int step);
-void WriteDDHDF(char *s, int step);
-void WriteGrainHDF(char *s, int step);
-void WriteGrainPFHDF(char *s, int step);
+void WriteEdotHDF(hid_t file_id, char *group_name);
+void WriteEpsHDF(hid_t file_id, char *group_name);
+void WriteElsHDF(hid_t file_id, char *group_name);
+void WriteDisgradHDF(hid_t file_id, char *group_name);
+void WriteSigHDF(hid_t file_id, char *group_name);
+void WriteTextureHDF(hid_t file_id, char *group_name);
+void WriteSLIPHDF(hid_t file_id, char *group_name);
+void WriteNewPositionHDF(hid_t file_id, char *group_name);
+void WriteDDHDF(hid_t file_id, char *group_name);
+void WriteGrainHDF(hid_t file_id, char *group_name);
+void WriteGrainPFHDF(hid_t file_id, char *group_name);
 #ifdef DD_BASED_FLAG
-void WriteRhoHDF(char *s, char *type, int step);
-void WriteRhoDotHDF(char *s, int step);
+void WriteRhoHDF(hid_t file_id, char *group_name, char *type);
+void WriteRhoDotHDF(hid_t file_id, char *group_name);
 #endif
 
 /**********************
