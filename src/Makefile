@@ -7,6 +7,8 @@ MPI_CFLAGS = -I../mpich/include
 MPI_LIBS = -L../mpich/lib
 FFTW_CFLAGS = -I../fftw/include
 FFTW_LIBS = -L../fftw/lib
+HDF_CFLAGS = -I../hdf/indclude
+HDF_LIBS = -I../hdf/lib
 LIBS = -lfftw_mpi -lfftw -lgsl -lgslcblas -lm -lhdf5
 SRCS = evp.c io.c init.c kinematics.c evolution.c constitutive.c integrated.c pf_xrx.c hdf_output.c
 OBJS = $(SRCS:.c=.o)
@@ -15,10 +17,10 @@ MAIN = forge
 #all: $(MAIN)
 
 $(MAIN): $(OBJS) Makefile
-	$(CC) $(SEEKFLAG) $(FFTW_CFLAGS) $(MPI_CFLAGS)  $(CFLAGS)  -o $(MAIN) $(OBJS) $(FFTW_LIBS) $(MPI_LIBS) $(LIBS)
+	$(CC) $(SEEKFLAG) $(HDF_CFLAGS) $(FFTW_CFLAGS) $(MPI_CFLAGS)  $(CFLAGS)  -o $(MAIN) $(OBJS) $(HDF_LIBS) $(FFTW_LIBS) $(MPI_LIBS) $(LIBS)
 
 %.o: %.c $(HEADER) Makefile
-	$(CC) $(SEEKFLAG) $(FFTW_CFLAGS) $(MPI_CFLAGS) $(CFLAGS)  -c $< -o $@
+	$(CC) $(SEEKFLAG) $(HDF_CFLAGS) $(FFTW_CFLAGS) $(MPI_CFLAGS) $(CFLAGS)  -c $< -o $@
 
 clean:
 	$(RM) *.o *~ $(MAIN)
