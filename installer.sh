@@ -1,9 +1,9 @@
 BASE_DIR=$(pwd)
 # install mpich
 cd $BASE_DIR/mpich/src
-rm -r mpich-3.2.1
-tar xf mpich-3.2.1.tar.gz
-cd $BASE_DIR/mpich/src/mpich-3.2.1
+rm -r mpich-3.4.1
+tar xf mpich-3.4.1.tar.gz
+cd $BASE_DIR/mpich/src/mpich-3.4.1
 ./configure --prefix=$BASE_DIR/mpich
 make
 make install

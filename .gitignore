@@ -8,7 +8,11 @@ mpich/bin
 mpich/lib
 mpich/share
 mpich/info
-mpich/src/mpich-3.2.1/*
+mpich/src/mpich-3.4.1/*
+hdf/include
+hdf/info
+hdf/lib
+hdf/src/hdf5-1.10.5/*
 src/*.o
 src/*.out
 test_run/*out
