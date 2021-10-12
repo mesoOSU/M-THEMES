@@ -7,8 +7,8 @@ MPI_CFLAGS = -I../mpich/include
 MPI_LIBS = -L../mpich/lib
 FFTW_CFLAGS = -I../fftw/include
 FFTW_LIBS = -L../fftw/lib
-HDF_CFLAGS = -I../hdf/indclude
-HDF_LIBS = -I../hdf/lib
+HDF_CFLAGS = -I../hdf/include
+HDF_LIBS = -L../hdf/lib
 LIBS = -lfftw_mpi -lfftw -lgsl -lgslcblas -lm -lhdf5
 SRCS = evp.c io.c init.c kinematics.c evolution.c constitutive.c integrated.c pf_xrx.c hdf_output.c
 OBJS = $(SRCS:.c=.o)
@@ -27,3 +27,4 @@ clean:
 
 depend: $(SRCS)
 	makedepend $^
+
