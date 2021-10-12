@@ -4,7 +4,7 @@ cd $BASE_DIR/mpich/src
 rm -r mpich-3.4.1
 tar xf mpich-3.4.1.tar.gz
 cd $BASE_DIR/mpich/src/mpich-3.4.1
-./configure --prefix=$BASE_DIR/mpich
+./configure --prefix=$BASE_DIR/mpich --with-device=ch4:ucx --disable-fortran
 make
 make install
 
