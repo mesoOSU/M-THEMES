@@ -9,6 +9,12 @@ mpich/lib
 mpich/share
 mpich/info
 mpich/src/mpich-3.2.1/*
+hdf/include
+hdf/info
+hdf/lib
+hdf/bin
+hdf/share
+hdf/src/hdf5-1.10.5/*
 src/*.o
 src/*.out
 test_run/*out
@@ -16,3 +22,4 @@ test_run/forge
 src/forge
 test_run/*.h5
 test_run/*.dream3d
+*.sh
