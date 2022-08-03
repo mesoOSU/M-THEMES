@@ -13,5 +13,5 @@ src/*.o
 test_run/*out
 test_run/forge
 src/forge
-uniform_data.txt
-non_uniform_data.txt
+*data.txt
+.spyproject/*

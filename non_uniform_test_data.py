@@ -11,7 +11,7 @@ from scipy.interpolate import interp2d
 
 plt.close('all')
 # load up data from spinodal structure
-original_data = plt.imread("spinodal.png")[:,:,0]
+original_data = plt.imread("spinodal.png")[:, :, 0]
 
 # display it (not important, just helpful to see)
 plt.imshow(original_data)
@@ -23,7 +23,7 @@ xx, yy = np.meshgrid(x, y)
 f = interp2d(x, y, original_data)
 
 
-# crease some non_uniform data to sample from your interpolation data
+# create some non_uniform data to sample from your interpolation data
 non_uniform_x = np.sort(np.random.random(20*(x.size))*(x.size))
 non_uniform_y = np.sort(np.random.random(20*(y.size))*(y.size))
 # get some data
@@ -38,7 +38,7 @@ nu_data = (nu_all_data.flatten())[indices]
 
 # plot it to make sure the function worked
 plt.figure()
-plt.contourf(nu_xx[::50,::50], nu_yy[::50,::50], nu_all_data[::50,::50])
+plt.contourf(nu_xx[::50, ::50], nu_yy[::50, ::50], nu_all_data[::50, ::50])
 plt.xlim(0, 128)
 plt.ylim(128, 0)
 # and save out a uniform and non_uniform sampling of the data
