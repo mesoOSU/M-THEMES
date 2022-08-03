@@ -42,7 +42,7 @@ This was written by Austin Gerlt, and glosses over a LOT of details, so feel fre
 
 [x] - Fork the repo
 
-[]  - as a test and as practice, check this box, commit the change, push it to your repo, them make a pull request to push your change to the MESOOSU repo (Austin can walk you through all this over zoom if you want) 
+[x]  - as a test and as practice, check this box, commit the change, push it to your repo, them make a pull request to push your change to the MESOOSU repo (Austin can walk you through all this over zoom if you want) 
 
 [] -successfully compile M-THEMES as is. THE BEST WAY TO DO THIS IS TO CHANGE THE INSTALL.SH FILE. Edit it so instead of installing directories locally, it just works on your machine specifically (might need to still make local installs since it uses such outdated mpi and fftw libraries, but the install.sh deletes, recompiles, and relinks those everytime, which takes hours and is pointless.)
 
