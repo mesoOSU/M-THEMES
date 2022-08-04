@@ -42,7 +42,19 @@ This was written by Austin Gerlt, and glosses over a LOT of details, so feel fre
 
 [x] - Fork the repo
 
-[x]  - as a test and as practice, check this box, commit the change, push it to your repo, them make a pull request to push your change to the MESOOSU repo (Austin can walk you through all this over zoom if you want) 
+
+[x] - as a test and as practice, check this box, commit the change, push it to your repo, them make a pull request to push your change to the MESOOSU repo (Austin can walk you through all this over zoom if you want) 
+
+[] - run "non_uniform_test_data.py", which should read in "spinodal.png" and create two text files from it: one with regular data and one with irregular data. the format is "x-coordinate, y-coordinate, data value" for both. 
+
+[] - figure out how to read in the data into nfft and have it return the 2D fourier transform. you can do this however you want: python, java, directly in command line, your choice. also figure out how to write the output to a text file. again, your choice on how.
+
+[] - read in the regular grid data into the uniform solver, and both the regular and irregular into the non-uniform, and save the results. since the results are going to be complex numbers, find the magnitude of the results, then plot them side by side so we can see how different they are (this should be 3 2-by-2 plots, each with several sharp peaks throughout.)
+
+
+## Future To-Do List (after we can show that NUFFT works and withminimal slowdown)
+---
+
 
 [] -successfully compile M-THEMES as is. THE BEST WAY TO DO THIS IS TO CHANGE THE INSTALL.SH FILE. Edit it so instead of installing directories locally, it just works on your machine specifically (might need to still make local installs since it uses such outdated mpi and fftw libraries, but the install.sh deletes, recompiles, and relinks those everytime, which takes hours and is pointless.)
 
@@ -60,6 +72,17 @@ This was written by Austin Gerlt, and glosses over a LOT of details, so feel fre
 - discussed in broad terms the Background and Objectives defined in this document
 - Need to schedule regular meetings, but also let Steve and Austin know whenever you get M-THEMES compiled as-is 
 
+8/4/22:
+- NFFT is working, git repo is functioning
+- need demo of I/O process for current NFFT (ie, how do I input data, and what do i get out)
+- Austin gave Arvind some python code to generate regular and irregular data from the same dataset.
+- next goal is proof of concept and validation for super basic NFFT example before going onto replacing FFTW2 with NFFT
+- Need to schedule regular meetings, but also let Steve and Austin know whenever you get M-THEMES compiled as-is 
+
 ## Resources
 ---
 Arvind, Add whatever links you want here, especially links to guides on how to compile NFFT and the examples you ran. this will be accessed by lots of people down the road who will also use this software.
+
+-  [Link to nfft manual](https://www-user.tu-chemnitz.de/~potts/nfft/guide/nfft3.pdf)
+
+

@@ -13,3 +13,5 @@ src/*.o
 test_run/*out
 test_run/forge
 src/forge
+*data.txt
+.spyproject/*
