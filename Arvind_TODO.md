@@ -42,6 +42,7 @@ This was written by Austin Gerlt, and glosses over a LOT of details, so feel fre
 
 [x] - Fork the repo
 
+
 [x] - as a test and as practice, check this box, commit the change, push it to your repo, them make a pull request to push your change to the MESOOSU repo (Austin can walk you through all this over zoom if you want) 
 
 [] - run "non_uniform_test_data.py", which should read in "spinodal.png" and create two text files from it: one with regular data and one with irregular data. the format is "x-coordinate, y-coordinate, data value" for both. 
@@ -53,6 +54,7 @@ This was written by Austin Gerlt, and glosses over a LOT of details, so feel fre
 
 ## Future To-Do List (after we can show that NUFFT works and withminimal slowdown)
 ---
+
 
 [] -successfully compile M-THEMES as is. THE BEST WAY TO DO THIS IS TO CHANGE THE INSTALL.SH FILE. Edit it so instead of installing directories locally, it just works on your machine specifically (might need to still make local installs since it uses such outdated mpi and fftw libraries, but the install.sh deletes, recompiles, and relinks those everytime, which takes hours and is pointless.)
 
@@ -81,7 +83,6 @@ This was written by Austin Gerlt, and glosses over a LOT of details, so feel fre
 ---
 Arvind, Add whatever links you want here, especially links to guides on how to compile NFFT and the examples you ran. this will be accessed by lots of people down the road who will also use this software.
 
-
-
 -  [Link to nfft manual](https://www-user.tu-chemnitz.de/~potts/nfft/guide/nfft3.pdf)
+
 
